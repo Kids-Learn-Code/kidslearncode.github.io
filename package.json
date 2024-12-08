@@ -3,5 +3,8 @@
     "firebase": "^11.0.2",
     "monaco-themes": "^0.4.4",
     "vite": "^5.4.11"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1"
   }
 }
