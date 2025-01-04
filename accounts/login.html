@@ -44,6 +44,7 @@
         }
 
         button {
+            border-color: black;
             width: 80%;
             max-width: 500px;
             display: block;
@@ -61,6 +62,7 @@
         }
 
         button:hover {
+            border-color: black;
             background-color: #00557A;
         }
 
@@ -91,15 +93,18 @@
 </head>
 <body>
     <h1 class="special">Login</h1>
-    <h2>Take note that all data in here are always at risk of a data leak.</h2>
+    <h2>Take note that usage of this platform is subject to our <a href=tncs.html"color: white;">terms and conditions</a></h2>
     <div id="fields">
         <input id="email" type="email" placeholder="Email">
         <input id="password" type="password" placeholder="Password">
         <button onclick="login()">Login</button>
-        <button onclick="GoogleSignIn()">Sign in with Google</button>
-        <button onclick="microsoftSignIn()">Sign in with Microsoft (Employees Only)</button>
-
         <button onclick="window.location.href='./ResetPassword'">Reset your password</button>
+        <button onclick="microsoftSignIn()">Sign in with Microsoft (Employees Only)</button>
+        <br>
+        <button onclick="GoogleSignIn()" style="background-color:aqua; color:black">Sign Up with Google</button>
+        
+
+        
 
         <div id="result"></div>
     </div>
