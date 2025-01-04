@@ -8,6 +8,11 @@
     <script src="script.js" defer></script>
     <div data-include="navbar.html"></div>
     <style>
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
         .flip-box-back h2 {
             color: black;
             font-weight: bold;
@@ -76,14 +81,14 @@
 </head>
 <body>
 <header>
-    <section class="header">
+    <section class="header" style="font-family: 'Red Rose'; font-weight:1000">
         <div class="typewriter">
             <h1 style="font-size: 2em;">Have a question?</h1>
             <p>Do drop us a message!</p>
         </div>
         <div class="contactus">
             <div class="flip-box">
-                <div class="flip-box-inner">
+                <div class="flip-box-inner" style="font-size: 1.5em;">
                     <div class="flip-box-front">
                         <h2>For Media/Organizational Partnership Queries</h2>
                     </div>
@@ -92,7 +97,7 @@
                     </div>
                 </div>
             </div>
-            <div class="flip-box">
+            <div class="flip-box" style="font-size: 1.5em;">
                 <div class="flip-box-inner">
                     <div class="flip-box-front">
                         <h2>For other queries on courses</h2>
@@ -105,6 +110,25 @@
         </div>
     </section>
 </header>
+<section class="skills-developed">
+    <div class="skills-container" style="background-color: white;">
+        <h1 style="font-weight: bolder;">Featured</h1>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <img src="images/TODAYscreenshot.png" alt="Screenshot of News Video" style="max-width: 100%; height: auto;">
+            <p style="font-weight: bold; margin-top: 10px;">Featured in CNA Today in collaboration with NVPC</p>
+            <a href="https://www.channelnewsasia.com/today/voices/community-heroes-teach-kids-coding-free-too-young-4637531" style="color: #007BFF; text-decoration: none;">Read more</a>
+        </div>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <img src="images/ANDPScreenshot.png" alt="Screenshot of Yearbook Article" style="max-width: 100%; height: auto;">
+            <p style="font-weight: bold; margin-top: 10px;">Featured in Anderson Primary School's Yearbook</p>
+            <a href="https://online.flipbuilder.com/zlpi/luzd/" style="color: #007BFF; text-decoration: none;">Read more</a>
+        </div>
+    </div>
+</section>
+
+
 
 <!--<script src="//code.tidio.co/erjlitousguh6i2nteif96hubirmdwdp.js" async></script>-->
 
