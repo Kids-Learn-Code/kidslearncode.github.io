@@ -1003,3 +1003,11 @@ nav li:first-child {
         flex-direction: row;
     }
 }
+.projects{
+            display: flex; flex-direction: column; justify-content: space-evenly; margin-bottom: 20px;
+        }
+        @media (min-width: 768px) {
+            .projects {
+                flex-direction: row;
+            }
+        }
