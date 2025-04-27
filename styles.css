@@ -975,3 +975,31 @@ nav li:first-child {
     from, to { border-color: transparent }
     50% { border-color: white; }
   }
+.footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2em;
+}
+
+.footer-logos {
+    display: flex;
+    /*flex-wrap: wrap;*/
+    flex-direction: column;
+    justify-content: center;
+    gap: 2em;
+}
+
+.footer-logos img {
+    max-width: 100%;
+    height: auto;
+}
+@media (min-width: 768px) {
+    .footer {
+        flex-direction: column;
+    }
+
+    .footer-logos {
+        flex-direction: row;
+    }
+}
