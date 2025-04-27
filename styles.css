@@ -776,7 +776,7 @@ nav{
     align-items: center;
 }
 .topbar {
-    margin-top: 70px; /*Change back to 20px when banner is over */
+    margin-top: 20px; /*Change back to 20px when banner is over */
     margin-left: auto;
     margin-right: auto;
     display: flex;

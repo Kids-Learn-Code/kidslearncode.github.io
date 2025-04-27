@@ -1,229 +1,192 @@
-//DO NOT EDIT THIS SET OF CODE
-//ANY EDIT MIGHT CAUSE DISRUPTION TO THE IDE
+import { useEffect, useState } from "react";
+import Head from "next/head";
+import Script from "next/script";
 
+export default function Home() {
+  const [editor, setEditor] = useState(null);
+  const [output, setOutput] = useState("");
+  const [language, setLanguage] = useState("python");
 
-
-// DO NOT EDIT THIS SET OF CODE
-// ANY EDIT MIGHT CAUSE DISRUPTION TO THE IDE
-
-const output = document.getElementById("output");
-function setCookie(name, value, days) {
-    const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    document.cookie = `${name}=${encodeURIComponent(value)};expires=${date.toUTCString()};path=/`;
-}
-
-function getCookie(name) {
-    const nameEQ = `${name}=`;
-    const ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.require) {
+      window.require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.34.0/min/vs" } });
+      window.require(["vs/editor/editor.main"], () => {
+        const monacoEditor = monaco.editor.create(document.getElementById("code"), {
+          value: `# Start coding here...`,
+          language: "python",
+          theme: "vs-dark",
+          automaticLayout: true,
+        });
+        setEditor(monacoEditor);
+      });
     }
-    return null;
-}
+  }, []);
 
-require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.34.0/min/vs' } });
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      requireScripts();
+    }
+  }, []);
 
-require(['vs/editor/editor.main'], function () {
-    let editor; // Global editor instance
-    const languagePicker = document.getElementById('language-picker');
-    const savedContent = getCookie("editorContent") || `// Start coding here...`;
+  function requireScripts() {
+    require.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.34.0/min/vs" } });
 
-    // Function to create/reinitialize the editor
-    function createEditor(language) {
-        if (editor) {
-            // Dispose the existing editor instance
-            editor.dispose();
+    require(["vs/editor/editor.main"], function () {
+      let monacoEditor;
+      const languagePicker = document.getElementById("language-picker");
+
+      function setCookie(name, value, days) {
+        const date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = `${name}=${encodeURIComponent(value)};expires=${date.toUTCString()};path=/`;
+      }
+
+      function getCookie(name) {
+        const nameEQ = `${name}=`;
+        const ca = document.cookie.split(";");
+        for (let i = 0; i < ca.length; i++) {
+          let c = ca[i].trim();
+          if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
         }
+        return null;
+      }
 
-        editor = monaco.editor.create(document.getElementById('code'), {
-            value: savedContent,
-            language: language,
-            theme: 'hc-black',
-            automaticLayout: true,
-            lineNumbers: "on",
-            fontSize: 15,
+      function createEditor(language) {
+        if (monacoEditor) monacoEditor.dispose();
+        monacoEditor = monaco.editor.create(document.getElementById("code"), {
+          value: getCookie("editorContent") || "# Start coding here...",
+          language: language,
+          theme: "vs-dark",
+          automaticLayout: true,
+          lineNumbers: "on",
+          fontSize: 15,
         });
 
-        editor.onDidChangeModelContent(() => {
-            setCookie("editorContent", editor.getValue(), 7); // Save content to cookie
+        monacoEditor.onDidChangeModelContent(() => {
+          setCookie("editorContent", monacoEditor.getValue(), 7);
         });
 
-        // Register completion providers for Python or JavaScript
-        if (language === 'python') {
-            monaco.languages.registerCompletionItemProvider('python', {
-                provideCompletionItems: function (model, position) {
-                    const word = model.getWordUntilPosition(position);
-                    const prefix = word.word.toLowerCase();
+        setEditor(monacoEditor);
+      }
 
-                    const filteredSuggestions = pythonSuggestions
-                        .filter(keyword => keyword.toLowerCase().startsWith(prefix))
-                        .map(keyword => ({
-                            label: keyword,
-                            kind: monaco.languages.CompletionItemKind.Keyword,
-                            insertText: keyword,
-                            range: {
-                                startLineNumber: position.lineNumber,
-                                startColumn: word.startColumn,
-                                endLineNumber: position.lineNumber,
-                                endColumn: word.endColumn,
-                            },
-                        }));
+      createEditor(languagePicker.value);
 
-                    return { suggestions: filteredSuggestions };
-                },
-            });
-        } else if (language === 'javascript') {
-            monaco.languages.registerCompletionItemProvider('javascript', {
-                provideCompletionItems: function (model, position) {
-                    const word = model.getWordUntilPosition(position);
-                    const prefix = word.word.toLowerCase();
+      languagePicker.addEventListener("change", () => {
+        createEditor(languagePicker.value);
+      });
 
-                    const filteredSuggestions = javascriptSuggestions
-                        .filter(keyword => keyword.toLowerCase().startsWith(prefix))
-                        .map(keyword => ({
-                            label: keyword,
-                            kind: monaco.languages.CompletionItemKind.Keyword,
-                            insertText: keyword,
-                            range: {
-                                startLineNumber: position.lineNumber,
-                                startColumn: word.startColumn,
-                                endLineNumber: position.lineNumber,
-                                endColumn: word.endColumn,
-                            },
-                        }));
-
-                    return { suggestions: filteredSuggestions };
-                },
-            });
-        }
-    }
-
-    createEditor(languagePicker.value);
-
-    languagePicker.addEventListener('change', () => {
-        const selectedLanguage = languagePicker.value;
-        createEditor(selectedLanguage);
-    });
-
-    async function main() {
+      async function main() {
         let pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.1/full/" });
-        await pyodide.loadPackage('micropip');
-        await pyodide.loadPackage('requests');
+        await pyodide.loadPackage("micropip");
+        await pyodide.loadPackage("requests");
 
         await pyodide.runPythonAsync(`
-        import micropip
-        
-        await micropip.install('httpx')
-    `);
-        output.value += "Ready!\n";
+            import micropip
+            await micropip.install('httpx')
+        `);
+        setOutput("Ready!\n");
         return pyodide;
-    }
+      }
 
-    let pyodideReadyPromise = main();
-    async function evaluatePython() {
+      let pyodideReadyPromise = main();
+
+      async function evaluatePython() {
         let pyodide = await pyodideReadyPromise;
         try {
-            const code = editor.getValue();
-            console.log(code);
-            pyodide.runPython(`
-import sys
-import io
-sys.stdout = io.StringIO()
-
-# Define a custom input function
-def input(prompt=""):
-    sys.stdout.write(prompt)
-    user_input = js_input(prompt)
-    sys.stdout.write(user_input + "\\n")  # Include the input in the output
-    return user_input
-`);
-
-            pyodide.globals.set("js_input", (prompt) => {
-                let userInput = window.prompt(prompt);
-                return userInput || "";
-            });
-
-            let outputValue = pyodide.runPython(code);
-
-            let printedOutput = pyodide.runPython("sys.stdout.getvalue()");
-
-            addToOutput(printedOutput + (outputValue ? outputValue : ""));
+          const code = monacoEditor.getValue();
+          pyodide.runPython(`
+            import sys
+            import io
+            sys.stdout = io.StringIO()
+          `);
+          let outputValue = pyodide.runPython(code);
+          let printedOutput = pyodide.runPython("sys.stdout.getvalue()");
+          setOutput(printedOutput + (outputValue ? outputValue : ""));
         } catch (err) {
-            console.error(err);
-            addToOutput(err);
+          console.error(err);
+          setOutput(err.toString());
         }
-    }
-    function addToOutput(s) {
-        output.value += ">>> " + s + "\n";
-    }
-    function evaluateJavaScript(code) {
-        // Save the original console methods
-        const originalLog = console.log;
-        const originalError = console.error;
+      }
 
-        // Override console.log to update the output field
-        console.log = function (message) {
-            output.value += "LOG: " + message + "\n";
-            originalLog.apply(console, arguments); // Call the original method
-        };
-
-        // Override console.error to update the output field
-        console.error = function (message) {
-            output.value += "ERROR: " + message + "\n";
-            originalError.apply(console, arguments); // Call the original method
-        };
-
+      function evaluateJavaScript() {
         try {
-            const result = eval(code);
-            output.value += "RESULT: " + result + "\n";
+          const result = eval(monacoEditor.getValue());
+          setOutput(result.toString());
         } catch (err) {
-            output.value += "EVAL ERROR: " + err + "\n";
-        } finally {
-            // Restore the original methods after execution
-            console.log = originalLog;
-            console.error = originalError;
+          setOutput(err.toString());
         }
-    }
+      }
 
-    function evaluate() {
-        const language = languagePicker.value;
-        const code = editor.getValue();
-
-        if (language === 'python') {
-            evaluatePython(code);
-        } else if (language === 'javascript') {
-            evaluateJavaScript(code);
+      function evaluate() {
+        if (languagePicker.value === "python") {
+          evaluatePython();
+        } else {
+          evaluateJavaScript();
         }
-    }
+      }
 
-    document.getElementById('run').addEventListener('click', evaluate);
-});
+      document.getElementById("run").addEventListener("click", evaluate);
+    });
+  }
 
-// Suggestions for Python
-const pythonSuggestions = [
-    'def', 'class', 'import', 'from', 'for', 'while', 'if', 'else', 'elif', 'return', 'print', 'input', 'try', 'except',
-    'with', 'as', 'True', 'False', 'None', 'list', 'dict', 'set', 'tuple', 'int', 'float', 'str', 'len', 'range', 'map',
-    'filter', 'lambda', 'open', 'read', 'write', 'append', 'in', 'is', 'not', 'and', 'or', 'break', 'continue', 'pass',
-    'global', 'nonlocal', 'yield', 'raise', 'super', 'self', 'init', 'del', 'str', 'repr', 'format', 'abs', 'all', 'any',
-    'bin', 'bool', 'bytearray', 'bytes', 'callable', 'chr', 'classmethod', 'compile', 'complex', 'delattr', 'dir', 'divmod',
-    'enumerate', 'eval', 'exec', 'exit', 'float', 'format', 'frozenset', 'getattr', 'globals', 'hasattr', 'hash', 'help',
-    'hex', 'id', 'input', 'isinstance', 'issubclass', 'iter', 'len', 'list', 'locals', 'map', 'max', 'min', 'next', 'object',
-    'oct', 'ord', 'pow', 'print', 'property', 'range', 'repr', 'reversed', 'round', 'set', 'setattr', 'slice', 'sorted',
-    'staticmethod', 'str', 'sum', 'super', 'tuple', 'type', 'vars', 'zip',
-];
+  return (
+    <div className="bg-gray-900 min-h-screen text-white">
+      <Head>
+        <title>KLC Code Editor</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="https://i.ibb.co/DtzhGqz/Kids-Learn-Code-1.png" />
+      </Head>
 
-// Suggestions for JavaScript
-const javascriptSuggestions = [
-    'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'export', 'extends',
-    'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof', 'let', 'new', 'return', 'super', 'switch', 'this',
-    'throw', 'try', 'typeof', 'var', 'void', 'while', 'with', 'yield', 'async', 'await', 'Array', 'Boolean', 'Date', 'Error',
-    'Function', 'JSON', 'Map', 'Math', 'Number', 'Object', 'Promise', 'RegExp', 'Set', 'String', 'Symbol', 'WeakMap', 'WeakSet',
-    'console', 'window', 'document', 'querySelector', 'addEventListener', 'setTimeout', 'setInterval', 'eval', 'isNaN',
-    'parseFloat', 'parseInt',
-];
-function promptUser(prompt) {
-    return window.prompt(prompt);
+      {/* External Scripts */}
+      <Script src="https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js" strategy="beforeInteractive" />
+      <Script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.34.0/min/vs/loader.js" strategy="beforeInteractive" />
+      <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4822143761765159" />
+
+      <main className="p-5">
+        <p className="mb-2">Note: Code stored will only persist for this session. Your work is auto-saved.</p>
+
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="w-full md:w-2/3 bg-gray-800 p-2 rounded">
+            <div id="code" className="h-80"></div>
+          </div>
+
+          <div className="w-full md:w-1/3 bg-gray-800 p-4 rounded">
+            <div className="flex gap-2 mb-3">
+              <select id="language-picker" className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+              </select>
+              <button id="run" className="bg-green-500 hover:bg-green-700 py-2 px-4 rounded">
+                Run
+              </button>
+              <button className="bg-yellow-500 hover:bg-yellow-700 py-2 px-4 rounded">
+                Save
+              </button>
+            </div>
+
+            <p>Output</p>
+            <textarea
+              id="output"
+              className="w-full h-40 bg-gray-900 text-white p-2 rounded resize-none"
+              value={output}
+              readOnly
+            ></textarea>
+          </div>
+        </div>
+      </main>
+
+      <div className="flex justify-center mt-5">
+        <ins
+          className="adsbygoogle"
+          style={{ display: "block", width: "100%", height: "auto" }}
+          data-ad-client="ca-pub-4822143761765159"
+          data-ad-slot="3978248428"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+        ></ins>
+      </div>
+
+
+    </div>
+  );
 }
