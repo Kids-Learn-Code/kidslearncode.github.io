@@ -568,7 +568,7 @@ footer {
 }
 .menu-bar ul li a {
   font-size: 20px;
-  color: var(--color-white);
+  color:#FFFFFF;
   text-decoration: none;
   transition: all 0.3s;
 }
@@ -609,11 +609,11 @@ footer {
 /*  top: 0;*/
 /*  background-color: #00557A;*/
 /*}*/
-.hero {
-  height: calc(100vh - 80px);
-  background-image: url(./bg.jpg);
-  background-position: center;
-}
+/*.hero {*/
+/*  height: calc(100vh - 80px);*/
+/*  background-image: url(./bg.jpg);*/
+/*  background-position: center;*/
+/*}*/
 
 main {
     padding: 20px;
@@ -685,7 +685,7 @@ main {
 
 
 .container{
-    padding: 10px, 50px;
+    padding: 10px 50px;
     position: relative;
     width:50%;
 }
