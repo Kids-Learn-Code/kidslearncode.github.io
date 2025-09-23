@@ -178,6 +178,22 @@
  <span class="BG"></span>
 </button>
 <script>
+  (function(d,t) {
+    var BASE_URL="https://chat.kidslearncode.org";
+    var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=BASE_URL+"/packs/js/sdk.js";
+    g.async = true;
+    s.parentNode.insertBefore(g,s);
+    g.onload=function(){
+      window.chatwootSDK.run({
+        websiteToken: '91EyJnKg23qKMHgNFZ9nyMPw',
+        baseUrl: BASE_URL
+      })
+    }
+  })(document,"script");
+</script>
+
+<script>
     const fixedButton = document.querySelector('.fixed-button');
     fixedButton.addEventListener('click', () => {
         window.location.href = 'https://www.instagram.com/kids_learn_code/';
