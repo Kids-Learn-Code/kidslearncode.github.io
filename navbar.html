@@ -179,19 +179,20 @@
 </button>
 <script>
   (function(d,t) {
-    var BASE_URL="https://chat.kidslearncode.org";
+    var BASE_URL="https://app.chatwoot.com";
     var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
     g.src=BASE_URL+"/packs/js/sdk.js";
     g.async = true;
     s.parentNode.insertBefore(g,s);
     g.onload=function(){
       window.chatwootSDK.run({
-        websiteToken: '91EyJnKg23qKMHgNFZ9nyMPw',
+        websiteToken: 'g3g5wRQDsdNUXUDcJ6mmC38U',
         baseUrl: BASE_URL
       })
     }
   })(document,"script");
 </script>
+
 
 <script>
     const fixedButton = document.querySelector('.fixed-button');

@@ -42,7 +42,21 @@
     <iframe width="640px" height="480px" src="https://forms.office.com/Pages/ResponsePage.aspx?id=qFekKch_sUuJAXDeEkTP6w2LfAPxIchIpI8kp4CVQEZUNUFLWUxTT0dRN0k3RERYOUYySzRGU0hFTi4u&embed=true" frameborder="0" marginwidth="0" marginheight="0" style="border: none; max-width:100%; max-height:100vh" allowfullscreen webkitallowfullscreen mozallowfullscreen msallowfullscreen> </iframe>
   </centre>
 </section>
-<script src="//code.tidio.co/erjlitousguh6i2nteif96hubirmdwdp.js" async></script>
+<script>
+  (function(d,t) {
+    var BASE_URL="https://app.chatwoot.com";
+    var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=BASE_URL+"/packs/js/sdk.js";
+    g.async = true;
+    s.parentNode.insertBefore(g,s);
+    g.onload=function(){
+      window.chatwootSDK.run({
+        websiteToken: 'g3g5wRQDsdNUXUDcJ6mmC38U',
+        baseUrl: BASE_URL
+      })
+    }
+  })(document,"script");
+</script>
 <footer class="footer">
         <p>Our Partners</p>
         <div class="footer-logos">
